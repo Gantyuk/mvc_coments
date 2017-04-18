@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Coments;
+use app\models\Marks;
 use app\models\Users;
 use vender\core\base\Controller;
 
@@ -40,6 +42,7 @@ class MainController extends Controller
                 $user->setEmail($data['email']);
                 $user->setPassword($data['password']);
                 $user->Add();
+                header('Location: /mvc_autorization/main/login');
             } else {
                 $this->setVars(compact("errors", "data"));
             }
@@ -53,7 +56,7 @@ class MainController extends Controller
         if (isset($data['do_login'])) {
             $errors = array();
             $user = new Users();
-            $atorization_user = $user->_mysql->Query("SELECT * FROM users WHERE Email = '" . $data['email'] . "'");
+            $atorization_user = $user->mysql_conect->Query("SELECT * FROM users WHERE Email = '" . $data['email'] . "'");
             if (empty($atorization_user)) {
                 $errors[] = "Не вірний Емайл";
             } else {
@@ -69,9 +72,46 @@ class MainController extends Controller
         }
         $this->getView();
     }
-    public function logout(){
+
+    public function logout()
+    {
         unset($_SESSION['User_login']);
         header('Location: /mvc_autorization/');
+    }
+
+    public function coments()
+    {
+        $coment = new Coments();
+        if (isset($_POST['mark']) && !empty($_POST['mark'])) {
+            $mark = new Marks();
+            $res = $mark->ifs($_POST['user_id'], $_POST['coment_id']);
+            if (empty($res)) {
+                $mark->setUserId($_POST['user_id']);
+                $mark->setComentId($_POST['coment_id']);
+                $mark->setMark($_POST['mark']);
+                $mark->add();
+            } else {
+                $mark->updae($_POST['user_id'], $_POST['coment_id'],$_POST['mark']);
+            }
+
+
+        }
+        if (isset($_POST['text']) && !empty($_POST['text'])) {
+            if ($_POST['chengy'] == -1) {
+                $coment->setParentId($_POST['parent_id']);
+                $coment->setText($_POST['text']);
+                $coment->setUserId($_SESSION["User_login"]['id']);
+                $coment->Add();
+            } else
+                $coment->updae($_POST['chengy'], $_POST['text']);
+        }
+        //Видалення видаляти щось з БД погано адже там можуть бути звязки
+        if (isset($_POST['delete']) && !empty($_POST['delete'])) {
+            $coment->delet($_POST['delete']);
+        }
+        $coments = $coment->ShowWherParentId(0);
+        $this->setVars(compact("coments"));
+        $this->getView();
     }
 }
 

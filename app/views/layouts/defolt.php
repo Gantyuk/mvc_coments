@@ -1,5 +1,6 @@
 <title>SoftGroup</title>
 <link rel="stylesheet" type="text/css" href="/mvc_autorization/css/style.css"/>
+<script type="text/javascript" src="/mvc_autorization/js/jquery-1.4.2.min.js"></script>
 </head>
 <body>
 <div class="header">
@@ -19,7 +20,7 @@
     <div class="sidebar">
         <ul>
             <?php if (isset($_SESSION['User_login'])): ?>
-                <li><a href="/mvc_autorization/main/index">Коментарі</a></li>
+                <li><a href="/mvc_autorization/main/coments">Коментарі</a></li>
                 <li><a href="/mvc_autorization/main/logout">Вихід</a></li>
             <?php else: ?>
                 <li><a href="/mvc_autorization/main/login">Вхід</a></li>

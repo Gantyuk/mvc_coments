@@ -20,7 +20,7 @@ class Users extends DB
 
     public function __construct()
     {
-        $this->_mysql = DB::instanse();
+        $this->mysql_conect = DB::instanse();
     }
 
     /**
@@ -83,9 +83,12 @@ class Users extends DB
         $this->_password = password_hash($password,PASSWORD_DEFAULT);
     }
 
+    /**
+     *
+     */
     public function Add()
     {
-        $this->_mysql->Query("
+        $this->mysql_conect->_mysqli->query("
 			INSERT INTO
 				users (Name, Email, Password)
 			VALUES
