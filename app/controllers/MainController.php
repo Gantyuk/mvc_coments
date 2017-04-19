@@ -81,37 +81,52 @@ class MainController extends Controller
 
     public function coments()
     {
-        $coment = new Coments();
-        if (isset($_POST['mark']) && !empty($_POST['mark'])) {
-            $mark = new Marks();
-            $res = $mark->ifs($_POST['user_id'], $_POST['coment_id']);
-            if (empty($res)) {
-                $mark->setUserId($_POST['user_id']);
-                $mark->setComentId($_POST['coment_id']);
-                $mark->setMark($_POST['mark']);
-                $mark->add();
-            } else {
-                $mark->updae($_POST['user_id'], $_POST['coment_id'],$_POST['mark']);
+        if (isset($_SESSION['User_login'])) {
+            $coment = new Coments();
+
+            //to do
+            if (isset($_GET['startFrom'])) {
+                $startFrom = $_GET['startFrom'];
+                $data = [];
+                $data['coment'] = $coment->ShowWherParentId("0 LIMIT " . $startFrom . ", 3");
+                print_r($data['coment']);
+                echo json_encode($data);
             }
+            //
+
+            if (isset($_POST['mark']) && !empty($_POST['mark'])) {
+                $mark = new Marks();
+                $res = $mark->ifs($_POST['user_id'], $_POST['coment_id']);
+                if (empty($res)) {
+                    $mark->setUserId($_POST['user_id']);
+                    $mark->setComentId($_POST['coment_id']);
+                    $mark->setMark($_POST['mark']);
+                    $mark->add();
+                } else {
+                    $mark->updae($_POST['user_id'], $_POST['coment_id'], $_POST['mark']);
+                }
 
 
+            }
+            if (isset($_POST['text']) && !empty($_POST['text'])) {
+                if ($_POST['chengy'] == -1) {
+                    $coment->setParentId($_POST['parent_id']);
+                    $coment->setText($_POST['text']);
+                    $coment->setUserId($_SESSION["User_login"]['id']);
+                    $coment->Add();
+                } else
+                    $coment->updae($_POST['chengy'], $_POST['text']);
+            }
+            //Видалення видаляти щось з БД погано адже там можуть бути звязки
+            if (isset($_POST['delete']) && !empty($_POST['delete'])) {
+                $coment->delet($_POST['delete']);
+            }
+            $coments = $coment->ShowWherParentId(0);
+            $this->setVars(compact("coments"));
+            $this->getView();
+        } else {
+            require_once APP."/views/layouts/ERROR.php";
         }
-        if (isset($_POST['text']) && !empty($_POST['text'])) {
-            if ($_POST['chengy'] == -1) {
-                $coment->setParentId($_POST['parent_id']);
-                $coment->setText($_POST['text']);
-                $coment->setUserId($_SESSION["User_login"]['id']);
-                $coment->Add();
-            } else
-                $coment->updae($_POST['chengy'], $_POST['text']);
-        }
-        //Видалення видаляти щось з БД погано адже там можуть бути звязки
-        if (isset($_POST['delete']) && !empty($_POST['delete'])) {
-            $coment->delet($_POST['delete']);
-        }
-        $coments = $coment->ShowWherParentId(0);
-        $this->setVars(compact("coments"));
-        $this->getView();
     }
 }
 

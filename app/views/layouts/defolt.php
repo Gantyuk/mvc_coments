@@ -1,6 +1,8 @@
 <title>SoftGroup</title>
 <link rel="stylesheet" type="text/css" href="/mvc_autorization/css/style.css"/>
 <script type="text/javascript" src="/mvc_autorization/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/mvc_autorization/js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="/mvc_autorization/js/scripts.js"></script>
 </head>
 <body>
 <div class="header">
